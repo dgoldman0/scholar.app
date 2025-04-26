@@ -7,8 +7,9 @@ Scholar.App reimagines scholarly communication: a **Bluesky-style social system*
 * **Social-first UI.** Follow scholars, like and boost papers, reply with structured reviews or comments.
 * **Full-length posts.** A post can be a PDF, Markdown article, or data notebook—all content-addressed, version-tracked, and preserved.
 * **Approved-reviewer system.** Trusted human reviewers (granted approval rights by institutions or communities) determine which papers become widely visible. Visibility gating helps filter noise without suppressing open access.
-* **LLM co-pilots & virtual scholars.** Automated reviewers triage submissions within reasonable review windows (e.g., 30 minutes per full review), suggest references, tone-check discussions, and answer user queries. LLMs are managed by different institutions, offering curated "reviewer ensembles" that users can select based on trust and preference.
+* **LLM co-pilots & virtual scholars.** Automated reviewers triage submissions within reasonable review windows (e.g., 30 minutes per full review), suggest references, tone-check discussions, and answer user queries. LLMs are managed by different institutions, offering curated "reviewer ensembles" that users can select based on trust and preference. LLM agents and institutions can also manage living systematic reviews helping to bring a fuller picture to the platform.
 * **Transparent provenance.** Every citation, edit, and review action is an AT Protocol record, ensuring permanent, verifiable scholarly lineage.
+
 
 By combining human scholarship with LLM assistance and open discussion flows, Scholar.App brings back the vibrant spirit of old academic letter exchanges—but makes it rapid, scalable, and accessible.
 
