@@ -26,9 +26,9 @@ This living checklist tracks every deliverable required to add **supplementary�
 
 | # | Component | Deliverable | Owner | Status |
 |---|-----------|-------------|-------|--------|
-| 3.1 | CLI – **ingest_paper.py** | Add `--asset` flag + ingestion logic | SDK Team | ✅ **Done** |
+| 3.1 | CLI – **ingest_paper.py** | Add `--asset` flag + ingestion logic | SDK Team | ⚪ In Progress |
 | 3.2 | CLI – unit tests for multi‑asset ingest | SDK Team | ⬜ Pending |
-| 3.3 | Blob helper | Local copy ↔ CID calc (no IPFS) | SDK Team | ✅ **Done** |
+| 3.3 | Blob helper (CID calc) | **Not required** – using direct CID calc in ingest | SDK Team | N/A |
 | 3.4 | IPFS pinning service (dev mode) | SDK Team | ⬜ Pending |
 | 3.5 | PDS record handlers (`createPaperAsset`) | PDS Team | ⬜ Pending |
 | 3.6 | PDS blob store wiring for assets | PDS Team | ⬜ Pending |
@@ -75,7 +75,9 @@ This living checklist tracks every deliverable required to add **supplementary�
 
 ---
 
-_Last updated: 26 Apr 2025 – 16:24 UTC
+_Last updated: 26 Apr 2025 – 16:28 UTC
+
+
 
 
 
