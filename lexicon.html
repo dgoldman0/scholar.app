@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Scholar.App Lexicon Documentation</title>
+  <style>
+    body { font-family: 'Helvetica Neue', sans-serif; margin: 0; padding: 0; line-height: 1.6; background: #f9f9f9; color: #333; }
+    header, section { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+    header { text-align: center; }
+    h1, h2, h3 { color: #004080; }
+    h1 { font-size: 2.5em; margin-bottom: 0.5em; }
+    h2 { font-size: 1.8em; margin-top: 1.5em; }
+    p, li { font-size: 1.1em; }
+    code { background: #eee; padding: 2px 4px; border-radius: 4px; }
+    pre { background: #eee; padding: 10px; border-radius: 8px; overflow-x: auto; }
+    ul { padding-left: 20px; }
+    .type { font-weight: bold; color: #008080; }
+    details { background: #fff; border: 1px solid #ccc; border-radius: 8px; padding: 10px 15px; margin-bottom: 15px; }
+    summary { font-size: 1.2em; font-weight: bold; cursor: pointer; outline: none; }
+    summary::-webkit-details-marker { display: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Scholar.App Lexicon Documentation</h1>
+  <p>Version 1.0.2 &mdash; April 27, 2025</p>
+</header>
+
+<section>
+  <h2>Introduction</h2>
+  <p>This document defines the record schemas for the <strong>Scholar.App</strong> decentralized scholarly network, built on the AT Protocol. Each record type is described in detail, including its fields, usage, and relationships to other types, along with example objects.</p>
+</section>
+
+<section>
+  <h2>Record Definitions</h2>
+
+<details>
+  <summary>📄 Paper (<code>scholar.app.paper</code>)</summary>
+  <p>Represents the canonical metadata of a scholarly paper, pointing to its latest version and tracking citation activity.</p>
+  <ul>
+    <li><span class="type">title</span> (string): The paper's title.</li>
+    <li><span class="type">slug</span> (string): URL-safe unique identifier for the paper.</li>
+    <li><span class="type">abstract</span> (string): Brief summary of the paper's content.</li>
+    <li><span class="type">authors</span> (array of objects): List of author information (DID, name, optional ORCID).</li>
+    <li><span class="type">publishedAt</span> (datetime): Date the paper was officially published.</li>
+    <li><span class="type">latestVersionCid</span> (string): CID pointing to the latest <code>paperVersion</code> record.</li>
+    <li><span class="type">references</span> (array of strings): CIDs of outgoing citation records.</li>
+    <li><span class="type">citedBy</span> (array of strings): CIDs of incoming citation records.</li>
+    <li><span class="type">citationsCount</span> (integer): Number of times cited.</li>
+    <li><span class="type">createdAt</span> (datetime): Timestamp of creation.</li>
+    <li><span class="type">updatedAt</span> (datetime): Timestamp of last update.</li>
+  </ul>
+  <h4>Example:</h4>
+  <pre>{
+  "title": "A Study of Quantum Graphs",
+  "slug": "quantum-graphs-study",
+  "abstract": "An exploration into the applications of quantum graphs in network theory.",
+  "authors": [
+    { "did": "did:example:1234", "name": "Alice Quantum" }
+  ],
+  "publishedAt": "2025-04-01T12:00:00Z",
+  "latestVersionCid": "bafybeicidv12345abcde",
+  "references": [],
+  "citedBy": [],
+  "citationsCount": 0,
+  "createdAt": "2025-04-01T12:00:00Z",
+  "updatedAt": "2025-04-01T12:00:00Z"
+}</pre>
+</details>
+
+<details>
+  <summary>📜 Paper Version (<code>scholar.app.paperVersion</code>)</summary>
+  <p>Immutable snapshot of a specific version of a paper's content.</p>
+  <ul>
+    <li><span class="type">paperSlug</span> (string): Associated paper slug.</li>
+    <li><span class="type">versionNumber</span> (integer): Version index.</li>
+    <li><span class="type">bodyCid</span> (string): CID of the full paper text (PDF/Markdown).</li>
+    <li><span class="type">uploadedAt</span> (datetime): Upload timestamp.</li>
+    <li><span class="type">authorDids</span> (array of strings): DIDs of contributing authors.</li>
+    <li><span class="type">notes</span> (string, optional): Version notes.</li>
+  </ul>
+  <h4>Example:</h4>
+  <pre>{
+  "paperSlug": "quantum-graphs-study",
+  "versionNumber": 1,
+  "bodyCid": "bafybeibodyv6789zyxwv",
+  "uploadedAt": "2025-04-01T12:00:00Z",
+  "authorDids": ["did:example:1234"],
+  "notes": "Initial draft"
+}</pre>
+</details>
+
+<details>
+  <summary>🔗 Citation (<code>scholar.app.citation</code>)</summary>
+  <p>Links a paper version to an external or internal resource it cites.</p>
+  <ul>
+    <li><span class="type">citingVersionCid</span> (string)</li>
+    <li><span class="type">target</span> (internal paper, DOI, URL, or BibTeX)</li>
+    <li><span class="type">context</span> (string, optional)</li>
+    <li><span class="type">label</span> (string, optional)</li>
+    <li><span class="type">createdAt</span> (datetime)</li>
+  </ul>
+  <h4>Example:</h4>
+  <pre>{
+  "citingVersionCid": "bafybeibodyv6789zyxwv",
+  "target": { "doi": "10.1038/s41586-020-2649-2" },
+  "context": "Building on the findings from recent quantum network research.",
+  "label": "Doe et al. (2020) Quantum Networks",
+  "createdAt": "2025-04-01T12:10:00Z"
+}</pre>
+</details>
+
+<details>
+  <summary>📝 Review (<code>scholar.app.review</code>)</summary>
+  <p>Formal peer review of a paper version.</p>
+  <ul>
+    <li><span class="type">paperSlug</span> (string)</li>
+    <li><span class="type">versionNumber</span> (integer)</li>
+    <li><span class="type">reviewerDid</span> (string)</li>
+    <li><span class="type">decision</span> (accept / revise / reject)</li>
+    <li><span class="type">comments</span> (string)</li>
+    <li><span class="type">rating</span> (number, optional)</li>
+    <li><span class="type">createdAt</span> (datetime)</li>
+  </ul>
+  <h4>Example:</h4>
+  <pre>{
+  "paperSlug": "quantum-graphs-study",
+  "versionNumber": 1,
+  "reviewerDid": "did:example:reviewer789",
+  "decision": "revise",
+  "comments": "Interesting concept, but the experimental section needs improvement.",
+  "rating": 3.5,
+  "createdAt": "2025-04-05T10:30:00Z"
+}</pre>
+</details>
+
+<details>
+  <summary>📩 Review Assignment (<code>scholar.app.reviewAssignment</code>)</summary>
+  <h4>Example:</h4>
+  <pre>{
+  "paperSlug": "quantum-graphs-study",
+  "versionNumber": 1,
+  "reviewerDid": "did:example:reviewer789",
+  "assignedByDid": "did:example:editor123",
+  "assignedAt": "2025-04-03T08:00:00Z"
+}</pre>
+</details>
+
+<details>
+  <summary>🏷️ Subject (<code>scholar.app.subject</code>)</summary>
+  <h4>Example:</h4>
+  <pre>{
+  "name": "Quantum Computing",
+  "slug": "quantum-computing",
+  "description": "The study of computation systems based on quantum mechanics.",
+  "createdAt": "2025-03-01T00:00:00Z"
+}</pre>
+</details>
+
+<details>
+  <summary>🧩 Paper Subject Link (<code>scholar.app.paperSubject</code>)</summary>
+  <h4>Example:</h4>
+  <pre>{
+  "paperSlug": "quantum-graphs-study",
+  "subjectSlug": "quantum-computing",
+  "assignedAt": "2025-04-01T12:05:00Z"
+}</pre>
+</details>
+
+<details>
+  <summary>👤 Profile (<code>scholar.app.profile</code>)</summary>
+  <h4>Example:</h4>
+  <pre>{
+  "did": "did:example:1234",
+  "handle": "aliceq",
+  "name": "Alice Quantum",
+  "affiliation": "Quantum Research Lab",
+  "orcid": "0000-0002-1825-0097",
+  "bio": "Researcher in quantum networks.",
+  "createdAt": "2025-01-01T00:00:00Z",
+  "updatedAt": "2025-04-01T12:00:00Z"
+}</pre>
+</details>
+
+<details>
+  <summary>🤖 Reviewer (<code>scholar.app.reviewer</code>)</summary>
+  <h4>Example:</h4>
+  <pre>{
+  "name": "QuantumBot Reviewer",
+  "type": "automated",
+  "expertise": ["quantum-computing"],
+  "endpoint": "https://quantumbot.example.com/reviews",
+  "createdAt": "2025-01-15T00:00:00Z",
+  "updatedAt": "2025-04-01T00:00:00Z"
+}</pre>
+</details>
+
+<details>
+  <summary>🏛️ Institution (<code>scholar.app.institution</code>)</summary>
+  <h4>Example:</h4>
+  <pre>{
+  "name": "Quantum Research Lab",
+  "slug": "quantum-research-lab",
+  "type": "lab",
+  "website": "https://quantumlab.example.com",
+  "location": "Cambridge, MA",
+  "description": "Leading research group in quantum networks and computation.",
+  "createdAt": "2024-11-01T00:00:00Z",
+  "updatedAt": "2025-04-01T00:00:00Z"
+}</pre>
+</details>
+
+</section>
+
+</body>
+</html>
