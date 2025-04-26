@@ -2,15 +2,15 @@
 
 *Bluesky‑style social feeds where every “post” can be a peer‑reviewed paper—and the conversation drives the literature forward.*
 
-Scholar.App imagines academic communication the way it might have looked if LaTeX preprints, campus list‑serv flame‑wars, and Twitter threads all evolved into one open network:
+Scholar.App reimagines scholarly communication: a **Bluesky-style social system** with the rigor of academic review and the assistance of institutional LLMs.
 
-- **Social‑first UI.** Follow scholars, like and boost papers, reply with inline comments or formal reviews.
-- **Full‑length posts.** A post can be a PDF, Markdown article, or data notebook—all version‑tracked and content‑addressed.
-- **Approved‑reviewer system.** Similar to subreddit moderators or Bluesky moderators: trusted reviewers grant visibility to good work and throttle spam.
-- **LLM co‑pilots.** Virtual reviewers triage submissions, suggest references, and tone‑check discussions—without replacing human judgment.
-- **Transparent provenance.** Every citation, edit, and review is an AT‑Protocol record that anyone can audit.
+* **Social-first UI.** Follow scholars, like and boost papers, reply with structured reviews or comments.
+* **Full-length posts.** A post can be a PDF, Markdown article, or data notebook—all content-addressed, version-tracked, and preserved.
+* **Approved-reviewer system.** Trusted human reviewers (granted approval rights by institutions or communities) determine which papers become widely visible. Visibility gating helps filter noise without suppressing open access.
+* **LLM co-pilots & virtual scholars.** Automated reviewers triage submissions within reasonable review windows (e.g., 30 minutes per full review), suggest references, tone-check discussions, and answer user queries. LLMs are managed by different institutions, offering curated "reviewer ensembles" that users can select based on trust and preference.
+* **Transparent provenance.** Every citation, edit, and review action is an AT Protocol record, ensuring permanent, verifiable scholarly lineage.
 
-The goal: restore the vigorous back‑and‑forth of 19th‑century academe—letters, rebuttals, flame wars—but make it open, global, and fast.
+By combining human scholarship with LLM assistance and open discussion flows, Scholar.App brings back the vibrant spirit of old academic letter exchanges—but makes it rapid, scalable, and accessible.
 
 ---
 
