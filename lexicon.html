@@ -90,6 +90,28 @@
 }</pre>
 </details>
 
+<h3>📂 Paper Asset (<code>scholar.app.paperAsset</code>)</h3>
+<p>Represents a supplementary file associated with a specific version of a paper (e.g., datasets, images, LaTeX sources).</p>
+<ul>
+  <li><span class="type">paperSlug</span> (string): The associated paper's slug.</li>
+  <li><span class="type">versionNumber</span> (integer): The version number of the paper this asset belongs to.</li>
+  <li><span class="type">assetCid</span> (string): Content ID (CID) of the supplementary file.</li>
+  <li><span class="type">mimeType</span> (string): MIME type of the file (e.g., image/png, application/zip).</li>
+  <li><span class="type">filename</span> (string): Original filename of the uploaded file.</li>
+  <li><span class="type">description</span> (string, optional): Description of the file’s contents or purpose.</li>
+  <li><span class="type">createdAt</span> (datetime): Timestamp of when the asset was added.</li>
+</ul>
+<h4>Example:</h4>
+<pre>{
+  "paperSlug": "quantum-graphs-study",
+  "versionNumber": 1,
+  "assetCid": "bafybeifilecid12345xyz",
+  "mimeType": "image/png",
+  "filename": "figure1.png",
+  "description": "Main figure for section 2",
+  "createdAt": "2025-05-01T12:00:00Z"
+}</pre>
+
 <!-- CITATION TARGET -->
 <details>
   <summary>🎯 Citation Target (<code>scholar.app.citationTarget</code>)</summary>
