@@ -2,15 +2,13 @@
    Scholar.App SQLite schema  –  v1.0.2   (2025-04-27)
    =========================================================== */
 
-/* ── PRAGMAS ─────────────────────────────────────────────── */
+/* ── GLOBAL PRAGMAS ───────────────────────────────────────── */
 PRAGMA journal_mode = WAL2;      -- dual-log write-ahead
-PRAGMA synchronous   = NORMAL;   -- good balance for WAL
+PRAGMA synchronous   = NORMAL;   -- safe + fast for WAL2
 PRAGMA foreign_keys  = ON;       -- enforce FK constraints
 
-/* ── HELPER MACRO (UTC timestamp default) ───────────────── */
--- Usage: created_at TEXT NOT NULL DEFAULT (utc_now())
-CREATE TEMPORARY FUNCTION utc_now() RETURNS TEXT AS
-'strftime(''%Y-%m-%dT%H:%M:%fZ'', ''now'')';
+/* Helper: ISO-8601 UTC timestamp default                     */
+-- strftime('%Y-%m-%dT%H:%M:%fZ','now')
 
 /* ===========================================================
    1.  ORGANISATIONS & PEOPLE
@@ -20,13 +18,15 @@ CREATE TABLE institution (
   slug         TEXT PRIMARY KEY
                CHECK (slug GLOB '[a-z0-9-]*'),
   name         TEXT    NOT NULL,
-  type         TEXT    NOT NULL  -- university | lab | club | …
-               CHECK (type IN ('university','lab','club','publisher','organization')),
+  type         TEXT    NOT NULL
+               CHECK (type IN ('university','lab','club',
+                                'publisher','organization')),
   website      TEXT,
   location     TEXT,
   description  TEXT,
   logo_cid     TEXT,
-  created_at   TEXT    NOT NULL DEFAULT (utc_now()),
+  created_at   TEXT    NOT NULL
+               DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
   updated_at   TEXT
 );
 
@@ -40,7 +40,8 @@ CREATE TABLE profile (
                     ON DELETE SET NULL,
   orcid            TEXT,
   bio              TEXT,
-  created_at       TEXT    NOT NULL DEFAULT (utc_now()),
+  created_at       TEXT    NOT NULL
+                    DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
   updated_at       TEXT
 );
 
@@ -56,7 +57,8 @@ CREATE TABLE paper (
   published_at       TEXT,
   latest_version_cid TEXT    NOT NULL,
   citations_count    INTEGER NOT NULL DEFAULT 0,
-  created_at         TEXT    NOT NULL DEFAULT (utc_now()),
+  created_at         TEXT    NOT NULL
+                      DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
   updated_at         TEXT    NOT NULL
 );
 
@@ -107,10 +109,11 @@ CREATE TABLE citation (
 
   context              TEXT,
   label                TEXT,
-  created_at           TEXT    NOT NULL DEFAULT (utc_now())
+  created_at           TEXT    NOT NULL
+                    DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
 );
 
-/* ----- auto-maintain paper.citations_count ----- */
+/* -- maintain paper.citations_count automatically -- */
 CREATE TRIGGER trg_citation_insert
 AFTER INSERT ON citation
 WHEN NEW.target_paper_slug IS NOT NULL
@@ -142,7 +145,8 @@ CREATE TABLE review (
                   CHECK (decision IN ('accept','revise','reject')),
   comments       TEXT    NOT NULL,
   rating         REAL,
-  created_at     TEXT    NOT NULL DEFAULT (utc_now()),
+  created_at     TEXT    NOT NULL
+                  DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
   FOREIGN KEY (paper_slug, version_number)
       REFERENCES paper_version(paper_slug, version_number)
       ON DELETE CASCADE
@@ -154,7 +158,8 @@ CREATE TABLE review_assignment (
   version_number   INTEGER NOT NULL,
   reviewer_did     TEXT    NOT NULL,
   assigned_by_did  TEXT    NOT NULL,
-  assigned_at      TEXT    NOT NULL DEFAULT (utc_now()),
+  assigned_at      TEXT    NOT NULL
+                  DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
   due_date         TEXT,
   FOREIGN KEY (paper_slug, version_number)
       REFERENCES paper_version(paper_slug, version_number)
@@ -173,7 +178,8 @@ CREATE TABLE subject (
   parent_slug  TEXT
                REFERENCES subject(slug)
                ON DELETE SET NULL,
-  created_at   TEXT DEFAULT (utc_now())
+  created_at   TEXT
+               DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
 );
 
 CREATE TABLE paper_subject (
@@ -181,7 +187,8 @@ CREATE TABLE paper_subject (
                REFERENCES paper(slug) ON DELETE CASCADE,
   subject_slug TEXT NOT NULL
                REFERENCES subject(slug) ON DELETE CASCADE,
-  assigned_at  TEXT DEFAULT (utc_now()),
+  assigned_at  TEXT
+               DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
   PRIMARY KEY (paper_slug, subject_slug)
 );
 
@@ -198,11 +205,11 @@ CREATE TABLE reviewer (
   affiliation_slug TEXT
                   REFERENCES institution(slug) ON DELETE SET NULL,
   endpoint         TEXT,
-  created_at       TEXT    NOT NULL DEFAULT (utc_now()),
+  created_at       TEXT    NOT NULL
+                  DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
   updated_at       TEXT
 );
 
-/* many-to-many reviewer ↔ expertise subject */
 CREATE TABLE reviewer_expertise (
   reviewer_id  INTEGER NOT NULL
                REFERENCES reviewer(id) ON DELETE CASCADE,
@@ -218,7 +225,6 @@ CREATE TABLE reviewer_expertise (
 CREATE VIRTUAL TABLE fts_paper
 USING fts5(slug UNINDEXED, title, abstract);
 
-/* keep FTS in sync */
 CREATE TRIGGER fts_paper_after_insert
 AFTER INSERT ON paper
 BEGIN
@@ -252,3 +258,4 @@ CREATE INDEX idx_citation_citing
 
 CREATE INDEX idx_review_paper
             ON review(paper_slug, version_number);
+
