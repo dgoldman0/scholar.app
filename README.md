@@ -1,131 +1,127 @@
 # Scholar.App
 
-*Decentralized open-access publishing for the next era of scholarship.*
+*Bluesky‑style social feeds where every “post” can be a peer‑reviewed paper—and the conversation drives the literature forward.*
 
-Scholar.App provides an open, federated infrastructure for publishing, reviewing, and preserving academic papers, using the AT Protocol (the federation layer behind Bluesky) and decentralized content-addressed storage.
+Scholar.App imagines academic communication the way it might have looked if LaTeX preprints, campus list‑serv flame‑wars, and Twitter threads all evolved into one open network:
 
-Papers, versions, reviews, and citations are stored as **AT Protocol records**. Full-text PDFs and supplementary files are stored as **blobs**, retrievable via IPFS or any compatible blob store. Scholar.App ensures your research remains verifiable, portable, and free.
+- **Social‑first UI.** Follow scholars, like and boost papers, reply with inline comments or formal reviews.
+- **Full‑length posts.** A post can be a PDF, Markdown article, or data notebook—all version‑tracked and content‑addressed.
+- **Approved‑reviewer system.** Similar to subreddit moderators or Bluesky moderators: trusted reviewers grant visibility to good work and throttle spam.
+- **LLM co‑pilots.** Virtual reviewers triage submissions, suggest references, and tone‑check discussions—without replacing human judgment.
+- **Transparent provenance.** Every citation, edit, and review is an AT‑Protocol record that anyone can audit.
 
----
-
-## ✨ Why Scholar.App?
-
-| Problem in Traditional Academia | Scholar.App Approach |
-| -------------------------------- | ---------------------- |
-| Expensive paywalled journals | Open, portable, permissionless publication |
-| Opaque peer review | Transparent peer-review records linked to papers |
-| Link rot and PDF rot | CIDs ensure immutable, accessible content |
-| Slow and siloed publishing cycles | Native support for paper versioning and dynamic updates |
-
+The goal: restore the vigorous back‑and‑forth of 19th‑century academe—letters, rebuttals, flame wars—but make it open, global, and fast.
 
 ---
 
-## 1. Core Components
+## 1. Why a “Bluesky for Papers”?
 
-| Record | Purpose |
-|--------|---------|
-| `paper` | Canonical metadata about a scholarly work |
-| `paperVersion` | Immutable version snapshots (full text blobs) |
-| `paperAsset` | Supplementary files (figures, data, LaTeX, media) |
-| `citation` | Formal record of cited works |
-| `review` / `reviewAssignment` | Structured peer review tracking |
-| `subject` | Academic subject taxonomy |
-| `profile`, `reviewer`, `institution` | Scholarly identity records |
+| Pain Point                    | Scholar.App Answer                                                   |
+| ----------------------------- | -------------------------------------------------------------------- |
+| Journals pay‑walled & slow    | Instant posting; authors keep copyright; optional embargo flag       |
+| Anonymous, opaque peer review | Signed, public reviews; reviewer reputations visible                 |
+| One‑way publishing            | Replies & review comments form threaded discussion feeds             |
+| PDF rot & link rot            | Files are IPFS‑addressed and verifiable by CID                       |
+| Social media chaos            | Rate‑limits + reviewer‑approved visibility prevent low‑quality noise |
 
 ---
 
-## 2. System Architecture
+## 2. Core Record Types (AT Lexicon v1.0.3)
+
+| Record                               | Why it matters                                  |
+| ------------------------------------ | ----------------------------------------------- |
+| `paper`                              | Main metadata card shown in feeds               |
+| `paperVersion`                       | Immutable snapshot + `bodyCid` (PDF/MD)         |
+| `paperAsset`                         | Supplementary data / figures / code archives    |
+| `citation`                           | Graph edge for references (internal or DOI/URL) |
+| `review` / `reviewAssignment`        | Signed peer review workflow                     |
+| `subject`                            | Community‑editable taxonomy                     |
+| `profile`, `reviewer`, `institution` | Identity & moderation roles                     |
+
+---
+
+## 3. High‑Level Architecture
 
 ```
-┌───────────────┐      createRecord        ┌───────────────┐
-│  Client / UI  │ ───────────────────────▶ │  PDS Server   │
-└───────────────┘                          │ (AT Protocol) │
-      ▲   ▲                                └──────┬────────┘
-      │   │  blob fetch (CID)                     │
-REST / WS   ─────────────────────────────────────▶│
-      │   │                                       ▼
-      ▼   ▼                                ┌───────────────┐
-     SQLite (records)   Blob store / IPFS  │  Peers / IPLD │
+┌───────────────┐  likes / replies  ┌───────────────┐
+│  Web / Mobile │ ────────────────▶ │  PDS  (AT)    │
+└───────────────┘    createRecord   │  + LLM agent  │
+      ▲                            └──┬─────────────┘
+      │ (CID fetch)                   │ federates feeds
+      ▼                               ▼
+  IPFS / Blob Store  ◀──────── other PDS peers
 ```
 
-- **SQLite**: Fast, transactional local database (WAL2 journaling).
-- **Blob store**: Content-addressed files (optionally pinned via IPFS).
-- **AT Protocol**: Decentralized identity and record storage (via PDS).
+- **SQLite + WAL2** → low‑friction local storage, incremental sync via Litestream/IPFS.
+- **LLM Reviewer Service** → container that listens for `reviewAssignment` records, posts draft reviews.
+- **Approved‑reviewer list** → `reviewer` records of type `editorial`, referenced in per‑subject policy configs.
 
 ---
 
-## 3. Local Development
+## 4. Local Quick‑Start
 
 ```bash
-# Clone the repository
+# Clone & set up env
 $ git clone https://github.com/scholar-app/scholar-app.git
-$ cd scholar-app
-
-# (Optional) Set up virtual environment
-$ python -m venv .venv && source .venv/bin/activate
-
-# Install requirements
+$ cd scholar-app && python -m venv .venv && source .venv/bin/activate
 $ pip install -r requirements.txt
 
-# Initialize SQLite schema
+# Init DB schema
 $ sqlite3 scholar.db < schema/scholar_schema.sql
 
-# Ingest a paper
+# Ingest a paper + figure
 $ python tools/ingest_paper.py \
-    --file sample_paper.pdf \
+    --file samples/paper.pdf \
     --slug quantum-graphs-study \
-    --title "A Study of Quantum Graphs" \
-    --author "did:example:1234,Alice Quantum" \
-    --notes "v1 initial upload"
-
-# Query the database
-$ sqlite3 scholar.db "SELECT slug, title FROM paper;"
-```
-
-> **Tip:** You can also attach supplementary files using `--asset path,mimeType,description`.
-
----
-
-## 4. Repository Layout
-
-```
-lexicon/                 # AT Protocol JSON schema (v1.0.3)
-schema/                  # SQLite DDL and migrations
-tools/
-  ingest_paper.py        # CLI for paper ingestion
-docs/
-  lexicon.html           # Full collapsible documentation
-  CHANGELOG.md
-pds/                     # (Coming soon) AT Protocol server glue
+    --title "Quantum Graphs" \
+    --author "did:ex:alice,Alice" \
+    --asset "samples/fig1.png,image/png,Main figure"
 ```
 
 ---
 
-## 5. Roadmap
+## 5. Roadmap (Realistic Order & Cadence)
 
-- **Q2 2025**: Full `paperAsset` support; reader UI prototype.
-- **Q3 2025**: Federated PDS deployments; citation graph indexing.
-- **Q4 2025**: Open peer review incentives; reputation tracking.
+| Phase                           | Target Date | Milestone                                                          |
+| ------------------------------- | ----------- | ------------------------------------------------------------------ |
+| **Alpha Social Feed**           | **Q3 2025** | Read‑only feed of paper cards; basic follow/like; PDF viewer       |
+| **Reviewer/Moderator System**   | **Q4 2025** | `reviewer` roles, visibility gating; manual peer review flow       |
+| **LLM‑Assisted Draft & Review** | **Q1 2026** | Co‑author suggestions; automated tone & plagiarism checks          |
+| **Federation Beta**             | **Q2 2026** | Multiple PDS nodes syncing papers & assets; citation graph queries |
+| **Public Launch**               | **Q4 2026** | Stable web/mobile apps, ORCID login, import from arXiv/DOI         |
 
-Contributions welcome — see [`CONTRIBUTING.md`](CONTRIBUTING.md) for guidelines.
-
----
-
-## 6. License
-
-Scholar.App source code is released under the **MIT License**.
-
-Sample papers and test data are released under **CC-BY 4.0** unless otherwise noted.
+*(Timeline adjusts as contributors join—see project board for up‑to‑date status.)*
 
 ---
 
-## Contact
+## 6. Repository Map
 
-- Project chat: `#scholar-app` on Bluesky Dev Slack
-- Maintainers: @aliceq, @bobsmith
-- Issues: Open a GitHub issue or start a discussion.
+```
+lexicon/        # AT‑Protocol schema JSONs (v1.0.3)
+schema/         # SQLite migrations
+pds/            # PDS wrapper + reviewer hooks
+  llm_agent/    # Automated reviewer micro‑service (WIP)
+tools/          # ingest_paper.py, dev helpers
+docs/           # HTML + Markdown reference, design notes
+```
 
 ---
 
-*Version: 1.0.3*
+## 7. Contributing
+
+We welcome pull requests for **UI prototypes, lexicon feedback, or LLM reviewer prompts**.\
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for coding guidelines and the CLA.
+
+---
+
+## 8. License & Contact
+
+*Code*: MIT • *Sample papers*: CC‑BY 4.0.\
+Maintainers: **@dgoldman0**
+
+---
+
+*README last updated 26 Apr 2025 – 1:07 PM EDT*
+
+
 
