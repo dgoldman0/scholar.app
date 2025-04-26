@@ -1,0 +1,245 @@
+{
+  "lexicon": "1.0.3",
+  "id": "scholar.app",
+  "revision": "2025-04-27",
+  "defs": {
+    "paper": {
+      "type": "object",
+      "description": "Metadata for a scholarly paper (latest version)",
+      "properties": {
+        "title": { "type": "string", "description": "Paper title" },
+        "slug": { "type": "string", "pattern": "^[a-z0-9\\-]+$", "description": "URL-safe identifier" },
+        "abstract": { "type": "string", "description": "Short summary of the paper" },
+        "authors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "did": { "type": "string" },
+              "name": { "type": "string" },
+              "orcid": { "type": "string" }
+            },
+            "required": ["did", "name"]
+          },
+          "description": "List of authors with DIDs and ORCIDs"
+        },
+        "publishedAt": { "type": "string", "format": "date-time", "description": "Publication date" },
+        "latestVersionCid": { "type": "string", "description": "CID of latest paperVersion record" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "references": {
+          "type": "array",
+          "items": { "type": "string", "description": "CID of citation records made by this paper" },
+          "description": "Outgoing citation record CIDs"
+        },
+        "citedBy": {
+          "type": "array",
+          "items": { "type": "string", "description": "CID of citation records citing this paper" },
+          "description": "Incoming citation record CIDs"
+        },
+        "citationsCount": {
+          "type": "integer",
+          "description": "Total number of citations received",
+          "default": 0
+        }
+      },
+      "required": ["title", "slug", "authors", "latestVersionCid", "createdAt", "updatedAt"]
+    },
+    "paperVersion": {
+      "type": "object",
+      "description": "Immutable snapshot of a paper’s content",
+      "properties": {
+        "paperSlug": { "type": "string" },
+        "versionNumber": { "type": "integer" },
+        "bodyCid": { "type": "string", "description": "CID of full-text PDF/Markdown" },
+        "uploadedAt": { "type": "string", "format": "date-time" },
+        "authorDids": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "DIDs of authors for this version"
+        },
+        "notes": { "type": "string", "description": "Version notes (e.g., 'v2: added experiments')" }
+      },
+      "required": ["paperSlug", "versionNumber", "bodyCid", "uploadedAt"]
+    },
+    "citationTarget": {
+      "type": "object",
+      "description": "Reference to an external or internal resource",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "paperSlug": { "type": "string" },
+            "versionNumber": { "type": "integer" }
+          },
+          "required": ["paperSlug"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "doi": { "type": "string" }
+          },
+          "required": ["doi"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "url": { "type": "string", "format": "uri" }
+          },
+          "required": ["url"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "rawBibTeX": { "type": "string" }
+          },
+          "required": ["rawBibTeX"]
+        }
+      ]
+    },
+    "citation": {
+      "type": "object",
+      "description": "A bibliographic link (citation) between resources",
+      "properties": {
+        "citingVersionCid": { "type": "string" },
+        "target": { "$ref": "#/defs/citationTarget" },
+        "context": { "type": "string", "description": "Optional excerpt or rationale" },
+        "label": { "type": "string", "description": "Formatted citation label (e.g., APA, MLA)" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["citingVersionCid", "target", "createdAt"]
+    },
+    "review": {
+      "type": "object",
+      "description": "Peer review report for a paper version",
+      "properties": {
+        "paperSlug": { "type": "string" },
+        "versionNumber": { "type": "integer" },
+        "reviewerDid": { "type": "string" },
+        "decision": { "type": "string", "enum": ["accept", "revise", "reject"] },
+        "comments": { "type": "string" },
+        "rating": { "type": "number", "description": "Optional numeric score" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["paperSlug", "versionNumber", "reviewerDid", "decision", "comments", "createdAt"]
+    },
+    "reviewAssignment": {
+      "type": "object",
+      "description": "Invitation and authorization for a reviewer",
+      "properties": {
+        "paperSlug": { "type": "string" },
+        "versionNumber": { "type": "integer" },
+        "reviewerDid": { "type": "string" },
+        "assignedByDid": { "type": "string" },
+        "assignedAt": { "type": "string", "format": "date-time" },
+        "dueDate": { "type": "string", "format": "date-time", "description": "Optional review deadline" }
+      },
+      "required": ["paperSlug", "versionNumber", "reviewerDid", "assignedByDid", "assignedAt"]
+    },
+    "subject": {
+      "type": "object",
+      "description": "Academic discipline or topic",
+      "properties": {
+        "name": { "type": "string" },
+        "slug": { "type": "string", "pattern": "^[a-z0-9\\-]+$" },
+        "description": { "type": "string" },
+        "parentSlug": { "type": "string", "description": "Optional parent subject" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "slug"]
+    },
+    "paperSubject": {
+      "type": "object",
+      "description": "Link between a paper and a subject",
+      "properties": {
+        "paperSlug": { "type": "string" },
+        "subjectSlug": { "type": "string" },
+        "assignedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["paperSlug", "subjectSlug"]
+    },
+    "profile": {
+      "type": "object",
+      "description": "User profile with academic metadata",
+      "properties": {
+        "did": { "type": "string" },
+        "handle": { "type": "string" },
+        "name": { "type": "string" },
+        "affiliation": { "type": "string" },
+        "orcid": { "type": "string" },
+        "bio": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["did", "handle", "createdAt"]
+    },
+    "reviewer": {
+      "type": "object",
+      "description": "A reviewer entity, human or automated",
+      "properties": {
+        "reviewerDid": { "type": "string", "description": "DID of reviewer, if human" },
+        "name": { "type": "string", "description": "Name of reviewer or bot" },
+        "type": { "type": "string", "enum": ["human", "automated", "editorial"], "description": "Reviewer type" },
+        "affiliationSlug": { "type": "string", "description": "Optional institution slug" },
+        "expertise": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Subject slugs or tags of expertise"
+        },
+        "endpoint": { "type": "string", "format": "uri", "description": "Endpoint for bots to receive assignments" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "type", "createdAt"]
+    },
+    "institution": {
+      "type": "object",
+      "description": "An academic or organizational institution",
+      "properties": {
+        "name": { "type": "string", "description": "Institution name" },
+        "slug": { "type": "string", "pattern": "^[a-z0-9\\-]+$", "description": "URL-safe identifier" },
+        "type": { "type": "string", "enum": ["university", "lab", "club", "publisher", "organization"], "description": "Institution category" },
+        "website": { "type": "string", "format": "uri", "description": "Official website" },
+        "location": { "type": "string", "description": "Physical location" },
+        "description": { "type": "string", "description": "Brief description" },
+        "logoCid": { "type": "string", "description": "CID of logo image" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "slug", "type", "createdAt"]
+    },
+    "paperAsset": {
+      "type": "object",
+      "description": "Supplementary file associated with a paper version",
+      "properties": {
+        "paperSlug": { "type": "string" },
+        "versionNumber": { "type": "integer" },
+        "assetCid": { "type": "string" },
+        "mimeType": { "type": "string" },
+        "filename": { "type": "string" },
+        "description": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["paperSlug", "versionNumber", "assetCid", "mimeType", "filename", "createdAt"]
+    }
+  },
+  "records": {
+    "createPaper": { "encoding": "application/json", "schema": "#/defs/paper" },
+    "putPaper": { "encoding": "application/json", "schema": "#/defs/paper" },
+    "createPaperVersion": { "encoding": "application/json", "schema": "#/defs/paperVersion" },
+    "createCitation": { "encoding": "application/json", "schema": "#/defs/citation" },
+    "createReview": { "encoding": "application/json", "schema": "#/defs/review" },
+    "createReviewAssignment": { "encoding": "application/json", "schema": "#/defs/reviewAssignment" },
+    "createSubject": { "encoding": "application/json", "schema": "#/defs/subject" },
+    "putSubject": { "encoding": "application/json", "schema": "#/defs/subject" },
+    "createPaperSubject": { "encoding": "application/json", "schema": "#/defs/paperSubject" },
+    "createProfile": { "encoding": "application/json", "schema": "#/defs/profile" },
+    "putProfile": { "encoding": "application/json", "schema": "#/defs/profile" },
+    "createReviewer": { "encoding": "application/json", "schema": "#/defs/reviewer" },
+    "putReviewer": { "encoding": "application/json", "schema": "#/defs/reviewer" },
+    "createInstitution": { "encoding": "application/json", "schema": "#/defs/institution" },
+    "putInstitution": { "encoding": "application/json", "schema": "#/defs/institution" },
+    "createPaperAsset": { "encoding": "application/json", "schema": "#/defs/paperAsset" },
+    "putPaperAsset": { "encoding": "application/json", "schema": "#/defs/paperAsset" }
+  }
+}
