@@ -67,7 +67,7 @@ $ cd scholar-app && python -m venv .venv && source .venv/bin/activate
 $ pip install -r requirements.txt
 
 # Init DB schema
-$ sqlite3 scholar.db < schema/scholar_schema.sql
+$ sqlite3 scholar.db < schema/schema.sql
 
 # Ingest a paper + figure
 $ python tools/ingest_paper.py \
