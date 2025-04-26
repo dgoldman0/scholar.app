@@ -218,6 +218,25 @@ CREATE TABLE reviewer_expertise (
   PRIMARY KEY (reviewer_id, subject_slug)
 );
 
+CREATE TABLE paper_asset (
+  id             INTEGER PRIMARY KEY AUTOINCREMENT,
+  paper_slug     TEXT    NOT NULL
+                   REFERENCES paper(slug) ON DELETE CASCADE,
+  version_number INTEGER NOT NULL,
+  asset_cid      TEXT    NOT NULL,
+  mime_type      TEXT    NOT NULL,
+  filename       TEXT    NOT NULL,
+  description    TEXT,
+  created_at     TEXT    NOT NULL
+                   DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+  FOREIGN KEY (paper_slug, version_number)
+    REFERENCES paper_version(paper_slug, version_number)
+    ON DELETE CASCADE
+);
+
+CREATE INDEX idx_paper_asset_version
+  ON paper_asset(paper_slug, version_number);
+
 /* ===========================================================
    7.  FULL-TEXT SEARCH  (title & abstract)
    =========================================================== */
