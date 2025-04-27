@@ -1,0 +1,53 @@
+{
+  "lexicon": "1.0.3",
+  "id": "scholar.app.profile",
+  "defs": {
+    "profile": {
+      "type": "object",
+      "description": "User profile with academic metadata",
+      "properties": {
+        "did": {
+          "type": "string"
+        },
+        "handle": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "affiliation": {
+          "type": "string"
+        },
+        "orcid": {
+          "type": "string"
+        },
+        "bio": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "did",
+        "handle",
+        "createdAt"
+      ]
+    }
+  },
+  "records": {
+    "createProfile": {
+      "encoding": "application/json",
+      "schema": "#/defs/profile"
+    },
+    "putProfile": {
+      "encoding": "application/json",
+      "schema": "#/defs/profile"
+    }
+  }
+}

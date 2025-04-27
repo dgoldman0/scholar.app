@@ -1,0 +1,103 @@
+{
+  "lexicon": "1.0.3",
+  "id": "scholar.app.paper",
+  "defs": {
+    "paper": {
+      "type": "object",
+      "description": "Metadata for a scholarly paper (latest version)",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Paper title"
+        },
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9\\-]+$",
+          "description": "URL-safe identifier"
+        },
+        "abstract": {
+          "type": "string",
+          "description": "Short summary of the paper"
+        },
+        "authors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "did": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "orcid": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "did",
+              "name"
+            ]
+          },
+          "description": "List of authors with DIDs and ORCIDs"
+        },
+        "publishedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Publication date"
+        },
+        "latestVersionCid": {
+          "type": "string",
+          "description": "CID of latest paperVersion record"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "references": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "CID of citation records made by this paper"
+          },
+          "description": "Outgoing citation record CIDs"
+        },
+        "citedBy": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "CID of citation records citing this paper"
+          },
+          "description": "Incoming citation record CIDs"
+        },
+        "citationsCount": {
+          "type": "integer",
+          "description": "Total number of citations received",
+          "default": 0
+        }
+      },
+      "required": [
+        "title",
+        "slug",
+        "authors",
+        "latestVersionCid",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "records": {
+    "createPaper": {
+      "encoding": "application/json",
+      "schema": "#/defs/paper"
+    },
+    "putPaper": {
+      "encoding": "application/json",
+      "schema": "#/defs/paper"
+    }
+  }
+}

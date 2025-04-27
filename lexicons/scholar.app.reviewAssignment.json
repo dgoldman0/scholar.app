@@ -1,0 +1,46 @@
+{
+  "lexicon": "1.0.3",
+  "id": "scholar.app.reviewAssignment",
+  "defs": {
+    "reviewAssignment": {
+      "type": "object",
+      "description": "Invitation and authorization for a reviewer",
+      "properties": {
+        "paperSlug": {
+          "type": "string"
+        },
+        "versionNumber": {
+          "type": "integer"
+        },
+        "reviewerDid": {
+          "type": "string"
+        },
+        "assignedByDid": {
+          "type": "string"
+        },
+        "assignedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "dueDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Optional review deadline"
+        }
+      },
+      "required": [
+        "paperSlug",
+        "versionNumber",
+        "reviewerDid",
+        "assignedByDid",
+        "assignedAt"
+      ]
+    }
+  },
+  "records": {
+    "createReviewAssignment": {
+      "encoding": "application/json",
+      "schema": "#/defs/reviewAssignment"
+    }
+  }
+}

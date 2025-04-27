@@ -1,0 +1,54 @@
+{
+  "lexicon": "1.0.3",
+  "id": "scholar.app.review",
+  "defs": {
+    "review": {
+      "type": "object",
+      "description": "Peer review report for a paper version",
+      "properties": {
+        "paperSlug": {
+          "type": "string"
+        },
+        "versionNumber": {
+          "type": "integer"
+        },
+        "reviewerDid": {
+          "type": "string"
+        },
+        "decision": {
+          "type": "string",
+          "enum": [
+            "accept",
+            "revise",
+            "reject"
+          ]
+        },
+        "comments": {
+          "type": "string"
+        },
+        "rating": {
+          "type": "number",
+          "description": "Optional numeric score"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "paperSlug",
+        "versionNumber",
+        "reviewerDid",
+        "decision",
+        "comments",
+        "createdAt"
+      ]
+    }
+  },
+  "records": {
+    "createReview": {
+      "encoding": "application/json",
+      "schema": "#/defs/review"
+    }
+  }
+}

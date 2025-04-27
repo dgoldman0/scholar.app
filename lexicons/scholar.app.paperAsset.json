@@ -1,0 +1,52 @@
+{
+  "lexicon": "1.0.3",
+  "id": "scholar.app.paperAsset",
+  "defs": {
+    "paperAsset": {
+      "type": "object",
+      "description": "Supplementary file associated with a paper version",
+      "properties": {
+        "paperSlug": {
+          "type": "string"
+        },
+        "versionNumber": {
+          "type": "integer"
+        },
+        "assetCid": {
+          "type": "string"
+        },
+        "mimeType": {
+          "type": "string"
+        },
+        "filename": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "paperSlug",
+        "versionNumber",
+        "assetCid",
+        "mimeType",
+        "filename",
+        "createdAt"
+      ]
+    }
+  },
+  "records": {
+    "createPaperAsset": {
+      "encoding": "application/json",
+      "schema": "#/defs/paperAsset"
+    },
+    "putPaperAsset": {
+      "encoding": "application/json",
+      "schema": "#/defs/paperAsset"
+    }
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "lexicon": "1.0.3",
+  "id": "scholar.app.paperVersion",
+  "defs": {
+    "paperVersion": {
+      "type": "object",
+      "description": "Immutable snapshot of a paper\u2019s content",
+      "properties": {
+        "paperSlug": {
+          "type": "string"
+        },
+        "versionNumber": {
+          "type": "integer"
+        },
+        "bodyCid": {
+          "type": "string",
+          "description": "CID of full-text PDF/Markdown"
+        },
+        "uploadedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "authorDids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "DIDs of authors for this version"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Version notes (e.g., 'v2: added experiments')"
+        }
+      },
+      "required": [
+        "paperSlug",
+        "versionNumber",
+        "bodyCid",
+        "uploadedAt"
+      ]
+    }
+  },
+  "records": {
+    "createPaperVersion": {
+      "encoding": "application/json",
+      "schema": "#/defs/paperVersion"
+    }
+  }
+}

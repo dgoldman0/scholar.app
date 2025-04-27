@@ -1,0 +1,68 @@
+{
+  "lexicon": "1.0.3",
+  "id": "scholar.app.reviewer",
+  "defs": {
+    "reviewer": {
+      "type": "object",
+      "description": "A reviewer entity, human or automated",
+      "properties": {
+        "reviewerDid": {
+          "type": "string",
+          "description": "DID of reviewer, if human"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of reviewer or bot"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "human",
+            "automated",
+            "editorial"
+          ],
+          "description": "Reviewer type"
+        },
+        "affiliationSlug": {
+          "type": "string",
+          "description": "Optional institution slug"
+        },
+        "expertise": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Subject slugs or tags of expertise"
+        },
+        "endpoint": {
+          "type": "string",
+          "format": "uri",
+          "description": "Endpoint for bots to receive assignments"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "name",
+        "type",
+        "createdAt"
+      ]
+    }
+  },
+  "records": {
+    "createReviewer": {
+      "encoding": "application/json",
+      "schema": "#/defs/reviewer"
+    },
+    "putReviewer": {
+      "encoding": "application/json",
+      "schema": "#/defs/reviewer"
+    }
+  }
+}

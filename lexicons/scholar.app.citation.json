@@ -1,0 +1,95 @@
+{
+  "lexicon": "1.0.3",
+  "id": "scholar.app.citation",
+  "defs": {
+    "citationTarget": {
+      "type": "object",
+      "description": "Reference to an external or internal resource",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "paperSlug": {
+              "type": "string"
+            },
+            "versionNumber": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "paperSlug"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "doi": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "doi"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          "required": [
+            "url"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "rawBibTeX": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "rawBibTeX"
+          ]
+        }
+      ]
+    },
+    "citation": {
+      "type": "object",
+      "description": "A bibliographic link (citation) between resources",
+      "properties": {
+        "citingVersionCid": {
+          "type": "string"
+        },
+        "target": {
+          "$ref": "#/defs/citationTarget"
+        },
+        "context": {
+          "type": "string",
+          "description": "Optional excerpt or rationale"
+        },
+        "label": {
+          "type": "string",
+          "description": "Formatted citation label (e.g., APA, MLA)"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "citingVersionCid",
+        "target",
+        "createdAt"
+      ]
+    }
+  },
+  "records": {
+    "createCitation": {
+      "encoding": "application/json",
+      "schema": "#/defs/citation"
+    }
+  }
+}

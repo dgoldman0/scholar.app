@@ -1,0 +1,32 @@
+{
+  "lexicon": "1.0.3",
+  "id": "scholar.app.paperSubject",
+  "defs": {
+    "paperSubject": {
+      "type": "object",
+      "description": "Link between a paper and a subject",
+      "properties": {
+        "paperSlug": {
+          "type": "string"
+        },
+        "subjectSlug": {
+          "type": "string"
+        },
+        "assignedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "paperSlug",
+        "subjectSlug"
+      ]
+    }
+  },
+  "records": {
+    "createPaperSubject": {
+      "encoding": "application/json",
+      "schema": "#/defs/paperSubject"
+    }
+  }
+}

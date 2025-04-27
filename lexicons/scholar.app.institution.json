@@ -1,0 +1,73 @@
+{
+  "lexicon": "1.0.3",
+  "id": "scholar.app.institution",
+  "defs": {
+    "institution": {
+      "type": "object",
+      "description": "An academic or organizational institution",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Institution name"
+        },
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9\\-]+$",
+          "description": "URL-safe identifier"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "university",
+            "lab",
+            "club",
+            "publisher",
+            "organization"
+          ],
+          "description": "Institution category"
+        },
+        "website": {
+          "type": "string",
+          "format": "uri",
+          "description": "Official website"
+        },
+        "location": {
+          "type": "string",
+          "description": "Physical location"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief description"
+        },
+        "logoCid": {
+          "type": "string",
+          "description": "CID of logo image"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "name",
+        "slug",
+        "type",
+        "createdAt"
+      ]
+    }
+  },
+  "records": {
+    "createInstitution": {
+      "encoding": "application/json",
+      "schema": "#/defs/institution"
+    },
+    "putInstitution": {
+      "encoding": "application/json",
+      "schema": "#/defs/institution"
+    }
+  }
+}
