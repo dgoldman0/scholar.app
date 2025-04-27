@@ -1,14 +1,19 @@
 /* ===========================================================
-   Scholar.App SQLite schema  –  v1.0.2   (2025-04-27)
+   Scholar.App SQLite schema  –  v1.0.3   (2025-04-27)
    =========================================================== */
 
 /* ── GLOBAL PRAGMAS ───────────────────────────────────────── */
 PRAGMA journal_mode = WAL2;      -- dual-log write-ahead
 PRAGMA synchronous   = NORMAL;   -- safe + fast for WAL2
 PRAGMA foreign_keys  = ON;       -- enforce FK constraints
+PRAGMA temp_store    = MEMORY;   -- temp b-trees stay off-disk
+/* 50 MiB page-cache (negative ⇒ kibibytes) */
+PRAGMA cache_size    = -50000;   
 
-/* Helper: ISO-8601 UTC timestamp default                     */
--- strftime('%Y-%m-%dT%H:%M:%fZ','now')
+/* Helper: ISO-8601 UTC timestamp default
+   ─────────────────────────────────────────
+   strftime('%Y-%m-%dT%H:%M:%fZ','now')
+*/
 
 /* ===========================================================
    1.  ORGANISATIONS & PEOPLE
@@ -267,14 +272,70 @@ BEGIN
 END;
 
 /* ===========================================================
-   8.  HANDY INDEXES
+   8.  INDEXES  (query-path tuned)
    =========================================================== */
-CREATE INDEX idx_paper_version_uploaded
-            ON paper_version(uploaded_at);
 
-CREATE INDEX idx_citation_citing
-            ON citation(citing_version_cid);
+/* 8.1 Profiles & Institutions */
+CREATE INDEX IF NOT EXISTS idx_profile_affiliation
+          ON profile(affiliation_slug);
 
-CREATE INDEX idx_review_paper
-            ON review(paper_slug, version_number);
+/* 8.2 Papers */
+CREATE UNIQUE INDEX IF NOT EXISTS idx_paper_latest_cid
+                    ON paper(latest_version_cid);
+
+/* 8.3 Authorship */
+CREATE INDEX IF NOT EXISTS idx_paper_author_did
+          ON paper_author(did);
+
+CREATE INDEX IF NOT EXISTS idx_version_author_did
+          ON paper_version_author(author_did);
+
+/* 8.4 Paper versions */
+CREATE INDEX IF NOT EXISTS idx_paper_version_time
+          ON paper_version(paper_slug, uploaded_at DESC);
+
+/* 8.5 Citations (partial where majority of rows have NULL) */
+CREATE INDEX IF NOT EXISTS idx_citation_target_paper
+          ON citation(target_paper_slug, target_paper_version)
+       WHERE target_paper_slug IS NOT NULL;
+
+CREATE INDEX IF NOT EXISTS idx_citation_target_doi
+          ON citation(target_doi)
+       WHERE target_doi IS NOT NULL;
+
+CREATE INDEX IF NOT EXISTS idx_citation_target_url
+          ON citation(target_url)
+       WHERE target_url IS NOT NULL;
+
+/* 8.6 Reviews */
+CREATE INDEX IF NOT EXISTS idx_review_paper
+          ON review(paper_slug, version_number);
+
+CREATE INDEX IF NOT EXISTS idx_review_reviewer
+          ON review(reviewer_did);
+
+CREATE INDEX IF NOT EXISTS idx_review_assignment_reviewer
+          ON review_assignment(reviewer_did, due_date);
+
+CREATE INDEX IF NOT EXISTS idx_review_assignment_paper
+          ON review_assignment(paper_slug, version_number);
+
+/* 8.7 Subjects & expertise */
+CREATE INDEX IF NOT EXISTS idx_paper_subject_subject
+          ON paper_subject(subject_slug);
+
+CREATE INDEX IF NOT EXISTS idx_reviewer_expertise_subject
+          ON reviewer_expertise(subject_slug);
+
+/* 8.8 Assets */
+CREATE UNIQUE INDEX IF NOT EXISTS idx_paper_asset_cid
+                    ON paper_asset(asset_cid);
+
+/* 8.9 Misc handy indexes from v1.0.2 */
+CREATE INDEX IF NOT EXISTS idx_paper_version_uploaded
+          ON paper_version(uploaded_at);
+
+CREATE INDEX IF NOT EXISTS idx_citation_citing
+          ON citation(citing_version_cid);
+
 
