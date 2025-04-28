@@ -338,4 +338,24 @@ CREATE INDEX IF NOT EXISTS idx_paper_version_uploaded
 CREATE INDEX IF NOT EXISTS idx_citation_citing
           ON citation(citing_version_cid);
 
+-- Drafts table: holds entire paper draft + scratchpad + snapshots
+CREATE TABLE IF NOT EXISTS drafts (
+  slug          TEXT    PRIMARY KEY,
+  owner_did     TEXT    NOT NULL,
+  status        TEXT    NOT NULL DEFAULT 'draft',          -- draft | saved | published
+  title         TEXT,
+  body_markup   TEXT,                                       -- raw LaTeX / Markdown
+  scratchpad    TEXT,                                       -- JSON-encoded notes, sources, files, todos
+  snapshots     TEXT,                                       -- JSON-encoded array of snapshots
+  created_at    DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at    DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- For convenience, a trigger to keep updated_at fresh
+CREATE TRIGGER IF NOT EXISTS drafts_updated_at
+AFTER UPDATE ON drafts
+FOR EACH ROW
+BEGIN
+  UPDATE drafts SET updated_at = CURRENT_TIMESTAMP WHERE slug = OLD.slug;
+END;
 
