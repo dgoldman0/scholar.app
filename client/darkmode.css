@@ -1,0 +1,370 @@
+/* ——— GLOBAL RESET & TOKENS (Dark Mode) ——————————————————————————————— */
+:root {
+    /* palette (dark mode) */
+    --bg-page:        #111418;
+    --bg-surface:     #1a1d23;
+    --border:         #2b2f38;
+    --border-light:   #363a45;
+    --text-main:      #e5e7eb;
+    --text-muted:     #9ca3af;
+    --primary:        #3a5bff;
+    --primary-dark:   #2842d4;
+    --accent:         #f5c940;
+  
+    /* shape */
+    --radius-lg: 12px;
+    --radius-sm: 8px;
+    --shadow-sm: 0 2px 4px rgba(0,0,0,.5);
+    --shadow-md: 0 4px 10px rgba(0,0,0,.6);
+  
+    /* typography */
+    --font-ui:       -apple-system, BlinkMacSystemFont, "Segoe UI",
+                      Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-mono:     "SF Mono", Consolas, "Liberation Mono", monospace;
+  }
+  
+  *,
+  *::before,
+  *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+    font-family: var(--font-ui);
+    background: var(--bg-page);
+    color: var(--text-main);
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  /* ——— LAYOUT WRAPPERS ——————————————————————————————— */
+  .container {
+    display: flex;
+    height: 100%;
+    padding: 1rem;
+    gap: 1rem;
+  }
+  
+  /* ——— SCRATCHPAD ——————————————————————————————— */
+  .scratchpad {
+    flex: 0 0 285px;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+  
+  /* header */
+  .scratchpad-header {
+    padding: 1rem 1.25rem;
+    font-size: 1.45rem;
+    font-weight: 700;
+    border-bottom: 1px solid var(--border-light);
+  }
+  
+  /* collapsible sections */
+  details {
+    border-bottom: 1px solid var(--border-light);
+  }
+  details:last-of-type { border: none; }
+  
+  summary {
+    list-style: none;
+    padding: 0.9rem 1.25rem;
+    font-weight: 600;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+  }
+  
+  summary::-webkit-details-marker { display: none; }
+  
+  summary::after {
+    content: "▸";
+    position: absolute;
+    right: 1.25rem;
+    top: 1.05rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    transition: transform .18s ease;
+  }
+  details[open] > summary::after { transform: rotate(90deg); }
+  
+  /* section content */
+  .section-body {
+    padding: 0.8rem 1.55rem 1.1rem;
+    font-size: 0.95rem;
+    line-height: 1.45;
+    color: var(--text-muted);
+  }
+  
+  .section-body ul,
+  .section-body ol { margin-left: 1.2rem; margin-top: .35rem; }
+  
+  .section-body li { margin: .25rem 0; }
+  
+  /* file cards */
+  .file-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
+    gap: .6rem;
+    margin-top: .6rem;
+  }
+  
+  .file-card {
+    background: #252a35;
+    border: 1px solid #394150;
+    border-radius: var(--radius-sm);
+    padding: .55rem;
+    text-align: center;
+    font-size: .8rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text-main);
+  }
+  
+  /* todo indicator colours */
+  .todo { list-style: none; display: flex; align-items: center; gap: .45rem; }
+  .todo::before {
+    content: "";
+    width: .85rem;
+    height: .85rem;
+    border-radius: 2px;
+    background: var(--border-light);
+    display: inline-block;
+  }
+  .todo.done::before { background: #34d399; }
+  .todo.pending::before { background: #4b5563; }
+  
+  /* ——— EDITOR ——————————————————————————————— */
+  .editor {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+  
+  /* toolbar */
+  .editor-toolbar {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    padding: .85rem 1.2rem;
+    border-bottom: 1px solid var(--border-light);
+    background: var(--bg-surface);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .editor-toolbar h1 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .editor-toolbar button {
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: .4rem 1rem;
+    font-size: .9rem;
+    cursor: pointer;
+  }
+  button.primary   { background: var(--primary); color: #fff; }
+  button.primary:hover { background: var(--primary-dark); }
+  button.secondary { background: #2c3442; color: var(--text-main); }
+  #toggleBtn { background: var(--accent); color: #212121; font-weight: 600; }
+  #backBtn   { background: none; font-size: 1.2rem; padding: .25rem .5rem; color: var(--text-main); }
+  
+  /* editor panes */
+  .pane {
+    padding: 1.4rem 1.7rem;
+    overflow-y: auto;
+    line-height: 1.62;
+  }
+  pre { 
+    white-space: pre-wrap;
+    font-family: var(--font-mono);
+    font-size: .96rem;
+    color: var(--text-main);
+  }
+  
+  /* ——— AI ASSISTANT ——————————————————————————————— */
+  .assistant {
+    flex: 0 0 345px;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+  .assistant-header {
+    padding: 1rem 1.25rem;
+    font-size: 1.45rem;
+    font-weight: 700;
+    border-bottom: 1px solid var(--border-light);
+  }
+  
+  .chat {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem 1.3rem 1.3rem;
+    display: flex;
+    flex-direction: column;
+    gap: .55rem;
+  }
+  
+  .message {
+    max-width: 88%;
+    padding: .7rem 1rem;
+    border-radius: var(--radius-sm);
+    font-size: .95rem;
+    line-height: 1.45;
+    word-wrap: break-word;
+  }
+  .message.user {
+    align-self: flex-end;
+    background: var(--primary);
+    color: #fff;
+    border-bottom-right-radius: 2px;
+  }
+  .message.bot  {
+    align-self: flex-start;
+    background: #252a35;
+    color: var(--text-main);
+    border-bottom-left-radius: 2px;
+  }
+  
+  /* input bar */
+  .chat-input {
+    display: flex;
+    gap: .65rem;
+    padding: .9rem 1.25rem;
+    border-top: 1px solid var(--border-light);
+  }
+  .chat-input input {
+    flex: 1;
+    background: var(--bg-page);
+    color: var(--text-main);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: .55rem .85rem;
+    font-size: 1rem;
+  }
+  .chat-input button {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: .55rem 1.1rem;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  .chat-input button:hover { background: var(--primary-dark); }
+  
+  /* ——— GLOBAL HEADER ——————————————————————————————— */
+  .global-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    padding: 0 1.5rem;
+    z-index: 100;
+  }
+  
+  .global-header .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--text-main);
+  }
+  .global-header .logo-icon {
+    width: 28px;
+    height: 28px;
+  }
+  .global-header nav {
+    margin-left: 2rem;
+    display: flex;
+    gap: 1.5rem;
+  }
+  .global-header nav a {
+    color: var(--text-main);
+    text-decoration: none;
+    font-size: 1rem;
+    line-height: 1;
+  }
+  .global-header .search-btn {
+    margin-left: auto;
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: var(--text-main);
+  }
+  
+  /* ensure body content sits below fixed header */
+  body {  
+    padding-top: 64px;
+    overflow-x: hidden;
+  }
+  
+  /* ——— WORKSPACE WRAPPER ——————————————————————————————— */
+  .workspace-container {
+    max-width: 1080px;
+    margin: 0 auto;
+    display: flex;
+    gap: 1.25rem;
+    padding: 1.5rem;
+  }
+  
+  /* ———  LAYOUT TWEAKS  ————————————————————————————— */
+  
+  /* slimmer side-panels */
+  .scratchpad    { flex: 0 0 240px; }
+  .assistant     { flex: 0 0 280px; }
+  
+  /* let workspace span full viewport width */
+  .workspace-container {
+    max-width: none;
+    padding: 1.5rem 2rem;
+  }
+  
+  /* ———  HEADER FONT & LOGO FALLBACK  ————————————————— */
+  
+  /* header text size + weight */
+  .global-header {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  
+  /* if logo.svg fails, hide the broken icon and keep text */
+  .logo-icon { width: 28px; height: 28px; }
+  .logo-icon:not([src]) { display: none; }
+  .logo-icon[src=""], .logo-icon[src="logo.svg"]:not(:not(img)) {
+    display: none;
+  }
+  
+  /* ——— Widen AI Assistant panel ——————————————————————————— */
+  .assistant {
+    flex: 0 0 320px;
+  }
+  
+  

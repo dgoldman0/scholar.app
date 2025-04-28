@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Scholar Workspace</title>
+  <link rel="stylesheet" href="darkmode.css" />
+</head>
+<body>
+
+  <!-- ——— GLOBAL SCHOLAR HEADER ——— -->
+  <header class="global-header">
+    <div class="brand">
+      <img src="logo.png" class="logo-icon" alt="" onerror="this.style.display='none'">
+      <span>Scholar</span>
+    </div>
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">Trending</a>
+    </nav>
+    <button class="search-btn" aria-label="Search">🔍</button>
+  </header>
+
+  <!-- ——— WORKSPACE CONTENT ——— -->
+  <div class="workspace-container">
+    
+    <!-- Scratchpad (left) -->
+    <aside class="scratchpad">
+      <div class="scratchpad-header">Scratchpad</div>
+
+      <details open>
+        <summary>Notes</summary>
+        <div class="section-body">
+          <ul>
+            <li>Remember to cite S. J. Pan (2010) for transfer-learning survey.</li>
+            <li>Deepen discussion on domain adaptation.</li>
+            <li>Ask AI for recent medical-imaging examples.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>Sources &amp; References</summary>
+        <div class="section-body">
+          <ol>
+            <li>Pan, S. J., Yang, Q. (2010) – <i>IEEE TKDE</i></li>
+            <li>Goodfellow et al. (2016) – <i>Deep Learning</i></li>
+            <li>Weiss et al. (2016) – <i>Journal of Big Data</i></li>
+          </ol>
+        </div>
+      </details>
+
+      <details>
+        <summary>Files &amp; Assets</summary>
+        <div class="section-body">
+          <div class="file-grid">
+            <div class="file-card">fig1.png</div>
+            <div class="file-card">datasets.csv</div>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>To-Do</summary>
+        <div class="section-body">
+          <ul>
+            <li class="todo done">Draft transfer-learning paragraph</li>
+            <li class="todo pending">Run experiment on CIFAR-100</li>
+            <li class="todo pending">Add citations for vision transformers</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>Change Snapshots</summary>
+        <div class="section-body">
+          <ul>
+            <li>Snapshot – 2025-04-28 07:22</li>
+            <li>Snapshot – 2025-04-27 19:10</li>
+          </ul>
+        </div>
+      </details>
+    </aside>
+
+    <!-- Editor (center) -->
+    <main class="editor">
+      <header class="editor-toolbar">
+        <button id="backBtn">←</button>
+        <h1 contenteditable="true" spellcheck="false">
+          Deep Learning for Image Classification
+        </h1>
+        <button id="toggleBtn">Render</button>
+        <button class="secondary">Save</button>
+        <button class="primary">Publish</button>
+      </header>
+
+      <div id="codePane" class="pane">
+        <pre contenteditable="true" spellcheck="false">
+\section*{Abstract}
+This paper provides an overview of deep learning techniques for image classification.
+We discuss key models, training strategies, and applications across various domains.
+
+\section{Introduction}
+Image classification has evolved rapidly with the advent of deep learning.
+This section introduces the fundamental concepts and applications.
+
+\section{Transfer Learning}
+Transfer learning leverages existing models to improve new tasks,
+reducing the need for large datasets by re-using learned representations.
+        </pre>
+      </div>
+
+      <div id="renderPane" class="pane" style="display:none;">
+        <h2>Abstract</h2>
+        <p>This paper provides an overview of deep-learning techniques for image classification.
+        We discuss key models, training strategies, and applications across various domains.</p>
+
+        <h2>1 Introduction</h2>
+        <p>Image classification has evolved rapidly with the advent of deep learning.
+        This section introduces the fundamental concepts and applications.</p>
+
+        <h2>2 Transfer Learning</h2>
+        <p>Transfer learning leverages existing models to improve new tasks, reducing the need
+        for large datasets by re-using learned representations.</p>
+      </div>
+    </main>
+
+    <!-- AI Assistant (right) -->
+    <aside class="assistant">
+      <div class="assistant-header">AI Assistant</div>
+
+      <div class="chat">
+        <div class="message user">Let’s add a new section on transfer learning.</div>
+        <div class="message bot">Sure! Here’s a draft section.</div>
+        <div class="message user">Add some details on its advantages.</div>
+        <div class="message bot">
+          Added additional points on advantages, including faster convergence and reduced data requirements.
+        </div>
+        <div class="message user">Search for recent papers on transfer learning</div>
+        <div class="message bot">
+          Here are three relevant papers:
+          <ol>
+            <li>Pan &amp; Yang (2010) – <i>IEEE TKDE</i></li>
+            <li>Goodfellow <i>et al.</i> (2016) – <i>Deep Learning</i></li>
+            <li>Weiss <i>et al.</i> (2016) – <i>Journal of Big Data</i></li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="chat-input">
+        <input type="text" placeholder="Ask the assistant…" />
+        <button>Send</button>
+      </div>
+    </aside>
+
+  </div> <!-- end workspace-container -->
+
+  <script src="script.js"></script>
+</body>
+</html>
